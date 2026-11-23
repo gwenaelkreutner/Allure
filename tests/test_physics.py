@@ -3,8 +3,8 @@ import math
 import numpy as np
 import pytest
 
-from allure import Group, PowerTarget, Rider, Route, Settings, Solo, estimate, prepare
-from allure.params import Equipment, Pacing
+from allure_cycling import Group, PowerTarget, Rider, Route, Settings, Solo, estimate, prepare
+from allure_cycling.params import Equipment, Pacing
 
 FLAT_PACING = Pacing(climb_boost=0.0, descent_scale=1e9)
 
@@ -46,7 +46,7 @@ def test_group_is_faster_on_flat_than_on_climb_relative_to_solo():
 
 def test_np_target_is_met():
     res = estimate(straight(20_000, 0.03), Rider(68.0, 280), mode="tempo")
-    from allure.params import MODE_IF, Mode
+    from allure_cycling.params import MODE_IF, Mode
     assert res.normalized_power_w == pytest.approx(MODE_IF[Mode.TEMPO] * 280, rel=2e-3)
 
 
@@ -80,7 +80,7 @@ def test_climb_counting():
 
 
 def test_race_context_no_regroup_and_faster_than_solo():
-    from allure import Race
+    from allure_cycling import Race
     rider, p = Rider(68.0), PowerTarget(220, "avg")
     solo = estimate(straight(), rider, power=p)
     race = estimate(straight(), rider, power=p, context=Race())
@@ -89,5 +89,5 @@ def test_race_context_no_regroup_and_faster_than_solo():
 
 
 def test_mode_aliases():
-    from allure import Mode
+    from allure_cycling import Mode
     assert Mode("soutenu") is Mode.STEADY and Mode("course") is Mode.RACE

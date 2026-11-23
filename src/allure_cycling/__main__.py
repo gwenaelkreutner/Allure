@@ -1,9 +1,9 @@
-"""CLI: python -m allure route.gpx --mass 67 --ftp 288 --mode tempo [--group 15]"""
+"""CLI: python -m allure_cycling route.gpx --mass 67 --ftp 288 --mode tempo [--group 15]"""
 from __future__ import annotations
 
 import argparse
 
-from . import Group, Mode, PowerTarget, Race, Rider, Solo, estimate, load_gpx
+from . import Group, Mode, PowerTarget, Race, Rider, Solo, estimate, load_gpx, load_url
 
 
 def _hms(s: float) -> str:
@@ -13,7 +13,7 @@ def _hms(s: float) -> str:
 
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="allure", description=__doc__)
-    ap.add_argument("gpx")
+    ap.add_argument("gpx", help="GPX file or link (Komoot, RideWithGPS, direct .gpx)")
     ap.add_argument("--mass", type=float, required=True, help="rider mass, kg")
     ap.add_argument("--ftp", type=float, help="FTP, W (needed with --mode)")
     g = ap.add_mutually_exclusive_group(required=True)
@@ -27,7 +27,7 @@ def main(argv: list[str] | None = None) -> None:
 
     power = PowerTarget(a.np, "np") if a.np else PowerTarget(a.avg, "avg") if a.avg else None
     res = estimate(
-        load_gpx(a.gpx),
+        load_url(a.gpx) if a.gpx.startswith(("http://", "https://")) else load_gpx(a.gpx),
         Rider(a.mass, a.ftp),
         mode=a.mode,
         power=power,

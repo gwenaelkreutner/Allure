@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "allure"
-version = "0.1.0"
+name = "allure-cycling"
+version = "0.2.0"
 description = "Deterministic cycling moving-time estimation from a GPX route (physics-based, solo or group)"
 readme = "README.md"
 license = "MIT"
@@ -12,7 +12,8 @@ requires-python = ">=3.11"
 dependencies = ["numpy>=1.26", "scipy>=1.11", "gpxpy>=1.6"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+web = ["requests>=2.31"]
+dev = ["pytest>=8", "requests>=2.31"]
 
 [project.scripts]
-allure = "allure.__main__:main"
+allure = "allure_cycling.__main__:main"

@@ -1,4 +1,4 @@
-"""allure — deterministic cycling moving-time estimation from a GPX route."""
+"""allure_cycling — deterministic cycling moving-time estimation from a GPX route."""
 from .estimate import Estimate, TerrainSplit, estimate
 from .params import (
     Environment,
@@ -14,10 +14,11 @@ from .params import (
     Solo,
 )
 from .route import Course, Route, load_gpx, prepare
+from .sources import RouteSourceError, load_url
 
 __all__ = [
     "Course", "Environment", "Equipment", "Estimate", "Group", "Handling", "Mode",
     "Pacing", "PowerTarget", "Race", "Rider", "Route", "Settings", "Solo", "TerrainSplit",
-    "estimate", "load_gpx", "prepare",
+    "RouteSourceError", "estimate", "load_gpx", "load_url", "prepare",
 ]
-__version__ = "0.1.0"
+__version__ = "0.2.0"

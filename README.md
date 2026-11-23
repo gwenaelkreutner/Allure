@@ -1,4 +1,4 @@
-# allure
+# Allure — cycling moving-time estimation
 
 Deterministic estimation of cycling **moving time / average speed** from a GPX route.
 
@@ -12,16 +12,24 @@ Deterministic estimation of cycling **moving time / average speed** from a GPX r
 
 No history, no learning at run time: same inputs, same output.
 
+```
+pip install "allure-cycling[web] @ git+https://github.com/gwenaelkreutner/Allure@v0.2.0"
+```
+
 ```python
-from allure import load_gpx, estimate, Rider, Group
+from allure_cycling import load_gpx, load_url, estimate, Rider, Group
 
 res = estimate(load_gpx("route.gpx"), Rider(mass_kg=67, ftp_w=288), mode="tempo", context=Group(15))
 print(res.moving_time_s, res.avg_speed_kmh)
 ```
 
 ```
-python -m allure route.gpx --mass 67 --ftp 288 --mode race --race
+allure route.gpx --mass 67 --ftp 288 --mode steady --group 15
+allure https://www.komoot.com/tour/228834917 --mass 67 --ftp 288 --mode race --race
 ```
+
+Links: Komoot tours (public or with share token), RideWithGPS routes/trips, any URL
+serving a GPX. Strava does not expose route geometry without login: export the GPX.
 
 ## Validation
 
