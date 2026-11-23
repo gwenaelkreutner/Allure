@@ -71,6 +71,27 @@ class Course:
     def elevation_gain_m(self) -> float:
         return float((self.grade.clip(min=0) * self.ds).sum())
 
+    def tight_turns_per_km(self, radius_m: float = 20.0) -> float:
+        """Entries into turns tighter than `radius_m`, per km (junctions, roundabouts, hairpins)."""
+        tight = (self.radius_m < radius_m).astype(int)
+        return float((np.diff(tight) == 1).sum() / (self.distance_m / 1000))
+
+    def climbs(self, min_gain_m: float = 40.0, tolerance_m: float = 15.0) -> int:
+        """Number of climbs of at least `min_gain_m` followed by a descent (a dip
+        smaller than `tolerance_m` does not end a climb). A climb finishing the
+        route is not counted."""
+        ele = np.concatenate([[0.0], np.cumsum(self.grade * self.ds)])
+        n, lo, hi = 0, ele[0], ele[0]
+        for x in ele:
+            if x < lo:
+                lo = hi = x
+            elif x > hi:
+                hi = x
+            elif hi - x > tolerance_m:
+                n += hi - lo >= min_gain_m
+                lo = hi = x
+        return int(n)
+
 
 def _local_xy(route: Route) -> tuple[np.ndarray, np.ndarray]:
     lat0 = np.radians(route.lat.mean())

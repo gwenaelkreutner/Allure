@@ -45,6 +45,7 @@ class Group:
     size: int = 10
     front_share: float | None = None
     draft_factor: float | None = None
+    regroup: bool = True  # club rides wait for each other after climbs; False for races
 
     def effective(self) -> tuple[float, float]:
         # Calibrated on real club rides and races with mixed relays: the effective
@@ -76,7 +77,7 @@ class Mode(str, Enum):
 # Intensity factor (NP / FTP) per mode. RACE depends on the expected duration
 # (hours -> IF, linearly interpolated). Starting values, to be calibrated against
 # real rides — see docs/validation.md.
-MODE_IF = {Mode.CHILL: 0.65, Mode.TEMPO: 0.78}
+MODE_IF = {Mode.CHILL: 0.62, Mode.TEMPO: 0.76}
 RACE_IF_BY_HOURS = ((1.0, 0.95), (2.0, 0.90), (3.0, 0.86), (4.0, 0.83), (6.0, 0.78))
 
 
@@ -118,9 +119,32 @@ class Pacing:
 class Handling:
     """Speed limits from cornering and braking (descents, hairpins, roundabouts)."""
 
-    lateral_accel_ms2: float = 3.0
+    # Effective value fitted on real descents: lower than tyre grip allows, it also
+    # absorbs GPS-smoothed corners and real-world caution (traffic, visibility).
+    lateral_accel_ms2: float = 1.7
     brake_decel_ms2: float = 2.5
     max_speed_kmh: float = 75.0
+
+
+@dataclass(frozen=True)
+class Variability:
+    """Real rides are more variable than the simulated profile (traffic, junctions,
+    accelerations), so for a given NP less energy goes into speed. Expected
+    VI_real / VI_sim = base + per_tight_turn_per_km * (turns tighter than
+    tight_radius_m per km). Only used with NP targets (modes or kind="np")."""
+
+    base: float = 1.069
+    per_tight_turn_per_km: float = 0.672
+    tight_radius_m: float = 20.0
+
+
+@dataclass(frozen=True)
+class Regrouping:
+    """Time lost rolling slowly while a group regroups after a climb (club rides)."""
+
+    seconds_per_climb: float = 45.0  # weak fit (8 club rides, very scattered)
+    min_climb_gain_m: float = 40.0
+    tolerance_m: float = 15.0
 
 
 @dataclass(frozen=True)
@@ -129,3 +153,5 @@ class Settings:
     environment: Environment = field(default_factory=Environment)
     pacing: Pacing = field(default_factory=Pacing)
     handling: Handling = field(default_factory=Handling)
+    variability: Variability = field(default_factory=Variability)
+    regrouping: Regrouping = field(default_factory=Regrouping)

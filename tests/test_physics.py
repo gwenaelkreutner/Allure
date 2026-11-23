@@ -46,7 +46,8 @@ def test_group_is_faster_on_flat_than_on_climb_relative_to_solo():
 
 def test_np_target_is_met():
     res = estimate(straight(20_000, 0.03), Rider(68.0, 280), mode="tempo")
-    assert res.normalized_power_w == pytest.approx(0.78 * 280, rel=2e-3)
+    from allure.params import MODE_IF, Mode
+    assert res.normalized_power_w == pytest.approx(MODE_IF[Mode.TEMPO] * 280, rel=2e-3)
 
 
 def test_hairpin_limits_descent_speed():
@@ -64,3 +65,15 @@ def test_hairpin_limits_descent_speed():
     res = estimate(course, Rider(68.0), power=PowerTarget(150, "avg"))
     assert res.trace.speed.max() < 75 / 3.6 + 1e-6
     assert res.trace.speed[-3:].min() < 35 / 3.6  # slowed for the hairpin
+
+
+def test_climb_counting():
+    # up 100 m, down 100 m, up 30 m (too small), down, up 60 m and finish: 1 climb
+    seg = [(1000, 0.10), (1000, -0.10), (300, 0.10), (300, -0.10), (600, 0.10)]
+    d, e = [0.0], [100.0]
+    for length, g in seg:
+        for _ in range(int(length / 10)):
+            d.append(d[-1] + 10); e.append(e[-1] + 10 * g)
+    d = np.array(d)
+    course = prepare(Route.from_points(45 + d / 111_195.0, np.full(len(d), 5.0), e), elevation_sigma_m=1)
+    assert course.climbs(40, 15) == 1
