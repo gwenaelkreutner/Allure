@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 
-from . import Group, Mode, PowerTarget, Rider, Solo, estimate, load_gpx
+from . import Group, Mode, PowerTarget, Race, Rider, Solo, estimate, load_gpx
 
 
 def _hms(s: float) -> str:
@@ -20,7 +20,9 @@ def main(argv: list[str] | None = None) -> None:
     g.add_argument("--mode", choices=[m.value for m in Mode])
     g.add_argument("--np", type=float, help="target normalized power, W")
     g.add_argument("--avg", type=float, help="target average power, W")
-    ap.add_argument("--group", type=int, metavar="SIZE", help="ride in a group of SIZE riders")
+    ctx = ap.add_mutually_exclusive_group()
+    ctx.add_argument("--group", type=int, metavar="SIZE", help="club ride in a group of SIZE riders")
+    ctx.add_argument("--race", action="store_true", help="mass-start race on closed roads")
     a = ap.parse_args(argv)
 
     power = PowerTarget(a.np, "np") if a.np else PowerTarget(a.avg, "avg") if a.avg else None
@@ -29,7 +31,7 @@ def main(argv: list[str] | None = None) -> None:
         Rider(a.mass, a.ftp),
         mode=a.mode,
         power=power,
-        context=Group(a.group) if a.group else Solo(),
+        context=Race() if a.race else Group(a.group) if a.group else Solo(),
     )
     print(
         f"{res.distance_km:.1f} km, D+ {res.elevation_gain_m:.0f} m -> {_hms(res.moving_time_s)} "

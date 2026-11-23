@@ -12,6 +12,7 @@ from .params import (
     Group,
     Mode,
     PowerTarget,
+    Race,
     Rider,
     Settings,
     Solo,
@@ -68,16 +69,20 @@ def estimate(
 
     Give either an intensity `mode` (needs `rider.ftp_w`; targets an intensity
     factor NP/FTP) or an explicit `power` target. `context` is `Solo()` or
-    `Group(size=...)`; drafting lowers the effective CdA.
+    `Group(size=...)` (club ride with relays and regroupings) or `Race(...)`
+    (closed roads, peloton); drafting lowers the effective CdA.
     """
     if (mode is None) == (power is None):
         raise ValueError("give exactly one of `mode` or `power`")
     course = route if isinstance(route, Course) else prepare(route)
     eq = settings.equipment
-    cda = eq.cda_m2 * (context.cda_multiplier() if isinstance(context, Group) else 1.0)
+    cda = eq.cda_m2 * (1.0 if isinstance(context, Solo) else context.cda_multiplier())
     sim = Simulator(course, rider.mass_kg + eq.bike_mass_kg, cda, settings)
     var = settings.variability
-    vi_corr = var.base + var.per_tight_turn_per_km * course.tight_turns_per_km(var.tight_radius_m)
+    if isinstance(context, Race):
+        vi_corr = context.vi_correction
+    else:
+        vi_corr = var.base + var.per_tight_turn_per_km * course.tight_turns_per_km(var.tight_radius_m)
 
     def run_np(np_target: float) -> Trace:
         # the simulated profile is smoother than reality: aim for a lower simulated NP

@@ -65,7 +65,25 @@ class Group:
         return fs + (1.0 - fs) * k
 
 
-Context = Solo | Group
+@dataclass(frozen=True)
+class Race:
+    """Mass-start race on closed roads: never stops, no regrouping, riding mostly
+    sheltered with few relays.
+
+    Calibrated on two real races (2026, 97-122 km): drafting ~ CdA x0.8 like club
+    rides, but power is *smoother* than the simulated terrain pacing (peloton
+    evens out the effort): real/simulated VI ~0.95 instead of the urban correction.
+    """
+
+    size: int = 80
+    cda_multiplier_: float = 0.80
+    vi_correction: float = 0.95
+
+    def cda_multiplier(self) -> float:
+        return self.cda_multiplier_
+
+
+Context = Solo | Group | Race
 
 
 class Mode(str, Enum):

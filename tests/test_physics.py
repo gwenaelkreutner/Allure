@@ -77,3 +77,12 @@ def test_climb_counting():
     d = np.array(d)
     course = prepare(Route.from_points(45 + d / 111_195.0, np.full(len(d), 5.0), e), elevation_sigma_m=1)
     assert course.climbs(40, 15) == 1
+
+
+def test_race_context_no_regroup_and_faster_than_solo():
+    from allure import Race
+    rider, p = Rider(68.0), PowerTarget(220, "avg")
+    solo = estimate(straight(), rider, power=p)
+    race = estimate(straight(), rider, power=p, context=Race())
+    assert race.avg_speed_kmh > solo.avg_speed_kmh
+    assert race.regroup_s == 0.0
