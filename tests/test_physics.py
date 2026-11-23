@@ -6,7 +6,7 @@ import pytest
 from allure import Group, PowerTarget, Rider, Route, Settings, Solo, estimate, prepare
 from allure.params import Equipment, Pacing
 
-FLAT_PACING = Pacing(climb_gain=0.0, max_climb_factor=1.0, zero_power_grade=-1.0)
+FLAT_PACING = Pacing(climb_boost=0.0, descent_scale=1e9)
 
 
 def straight(length_m=10_000, grade=0.0, n=500):

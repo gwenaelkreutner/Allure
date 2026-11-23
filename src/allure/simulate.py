@@ -66,8 +66,8 @@ class Simulator:
         g = course.grade
         factor = np.where(
             g >= 0,
-            np.minimum(1.0 + pac.climb_gain * g, pac.max_climb_factor),
-            np.clip(1.0 - g / pac.zero_power_grade, 0.0, 1.0),
+            1.0 + pac.climb_boost * (1.0 - np.exp(-g / pac.climb_scale)),
+            np.exp(g / pac.descent_scale),
         )
         self.factor = factor.tolist()
 
