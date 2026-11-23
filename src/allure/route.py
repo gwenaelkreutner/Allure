@@ -104,7 +104,7 @@ def prepare(
     route: Route,
     *,
     step_m: float = 10.0,
-    elevation_sigma_m: float = 40.0,
+    elevation_sigma_m: float = 100.0,
     position_sigma_m: float = 15.0,
     curvature_baseline_m: float = 40.0,
     max_grade: float = 0.30,

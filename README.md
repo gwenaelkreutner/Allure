@@ -23,6 +23,18 @@ print(res.moving_time_s, res.avg_speed_kmh)
 python -m allure route.gpx --mass 67 --ftp 288 --mode race --race
 ```
 
-Status: v0, constants being calibrated against real rides.
+## Validation
+
+Constants are calibrated on one rider's real rides with a power meter (74 road rides,
+~150 h, solo, club groups and races, 2026), then frozen. Moving-time error:
+
+| Input | Route | Median error | Within ±5 % |
+|---|---|---|---|
+| real average power | planned route (DEM elevation, points every 50 m) | 3.2 % | 76 % |
+| real NP | planned route | 4.0 % | 68 % |
+| intensity mode only (FTP + mode + context) | planned route | 3.9 % | 89 % (n=9 labelled rides) |
+
+Group and race constants rest on few rides (8 club rides, 2 races): treat them as
+provisional. More validation data from other riders is welcome.
 
 License: MIT.
