@@ -40,7 +40,7 @@ def test_group_is_faster_on_flat_than_on_climb_relative_to_solo():
         estimate(straight(5000, 0.07), rider, power=p, context=Group(20), settings=s).avg_speed_kmh
         / estimate(straight(5000, 0.07), rider, power=p, settings=s).avg_speed_kmh
     )
-    assert flat_gain > 1.12
+    assert flat_gain > 1.05  # (1/0.8)^(1/3) ~ 1.077
     assert 1.0 < climb_gain < flat_gain
 
 

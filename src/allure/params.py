@@ -47,13 +47,13 @@ class Group:
     draft_factor: float | None = None
 
     def effective(self) -> tuple[float, float]:
-        n = max(2, self.size)
-        if n <= 5:
-            fs, k = 1.0 / n, 0.62
-        elif n <= 25:
-            fs, k = 0.12, 0.55
+        # Calibrated on real club rides and races with mixed relays: the effective
+        # CdA multiplier is ~0.8 whatever the size (0.77-0.83 measured), much less
+        # than the sheltered-only values of CFD studies (0.45-0.6).
+        if max(2, self.size) <= 2:
+            fs, k = 0.5, 0.62  # duo, sharing the work: 0.81
         else:
-            fs, k = 0.04, 0.45
+            fs, k = 0.2, 0.75  # club ride / peloton with relays: 0.80
         return (
             self.front_share if self.front_share is not None else fs,
             self.draft_factor if self.draft_factor is not None else k,
