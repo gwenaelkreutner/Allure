@@ -132,7 +132,10 @@ def describe(
 
     descents = []
     for a, b in _rises(-e, min_descent_m, tolerance_m):
+        a, b = _trim(-e, s, a, b)
         length, loss = s[b] - s[a], e[a] - e[b]
+        if loss < min_descent_m or loss / length < min_avg_grade:
+            continue  # a long false flat going down is not a descent
         descents.append(Descent(
             start_km=float(round(s[a] / 1000, 1)), length_km=float(round(length / 1000, 2)), loss_m=round(float(loss)),
             avg_grade=float(round(-loss / length, 3)), time_s=float(dt[a:b].sum()) if dt is not None else None,

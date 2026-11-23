@@ -45,3 +45,9 @@ def test_estimate_carries_climb_times_tss_and_work():
     assert res.kilojoules == pytest.approx(200 * res.moving_time_s / 1000, rel=0.01)
     assert res.tss == pytest.approx(res.moving_time_s / 3600 * (res.normalized_power_w / 280) ** 2 * 100)
     assert res.checkpoints[-1].elapsed_s == pytest.approx(res.moving_time_s, rel=0.01)
+
+
+def test_a_long_false_flat_down_is_not_a_descent():
+    route = profile_route([(2000, 0.06), (30000, -0.008), (2000, -0.05), (2000, 0.0)])
+    _, descents, _ = describe(prepare(route, elevation_sigma_m=20))
+    assert len(descents) == 1 and descents[0].avg_grade == pytest.approx(-0.05, abs=0.006)

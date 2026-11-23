@@ -22,4 +22,4 @@ __all__ = [
     "Pacing", "PowerTarget", "Race", "Rider", "Route", "Settings", "Solo", "TerrainSplit",
     "RouteSourceError", "describe", "estimate", "load_gpx", "load_url", "prepare",
 ]
-__version__ = "0.3.0"
+__version__ = "0.3.1"

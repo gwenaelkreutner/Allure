@@ -17,7 +17,7 @@ Deterministic estimation of cycling **moving time / average speed** from a GPX r
 No history, no learning at run time: same inputs, same output.
 
 ```
-pip install "allure-cycling[web] @ git+https://github.com/gwenaelkreutner/Allure@v0.3.0"
+pip install "allure-cycling[web] @ git+https://github.com/gwenaelkreutner/Allure@v0.3.1"
 ```
 
 ```python
