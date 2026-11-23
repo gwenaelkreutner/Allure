@@ -10,10 +10,14 @@ Deterministic estimation of cycling **moving time / average speed** from a GPX r
 - Intensity as a mode (`chill`, `steady`, `tempo`, `race`, targeting NP/FTP) or an explicit power target
   (normalized or average power).
 
+- Route description: every climb (start, length, gain, average grade, hardest kilometre, Strava-style
+  category HC/1–4) and main descent, with its predicted time and power; checkpoints every 10 km.
+- Effort: normalized and average power, intensity factor, TSS and kJ.
+
 No history, no learning at run time: same inputs, same output.
 
 ```
-pip install "allure-cycling[web] @ git+https://github.com/gwenaelkreutner/Allure@v0.2.0"
+pip install "allure-cycling[web] @ git+https://github.com/gwenaelkreutner/Allure@v0.3.0"
 ```
 
 ```python

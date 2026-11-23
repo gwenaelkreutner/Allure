@@ -17,6 +17,7 @@ from .params import (
     Settings,
     Solo,
 )
+from .profile import Checkpoint, Climb, Descent, describe, node_elevation
 from .route import Course, Route, prepare
 from .simulate import Simulator, Trace
 
@@ -43,6 +44,12 @@ class Estimate:
     intensity_factor: float | None
     splits: dict[str, TerrainSplit]  # "climb" (>3 %), "flat", "descent" (<-3 %)
     regroup_s: float  # time added for regroupings (group rides), included in moving_time_s
+    elevation_loss_m: float
+    kilojoules: float  # mechanical work = avg power x moving time
+    tss: float | None  # Coggan: hours x IF^2 x 100, from the expected NP; None without FTP
+    climbs: list[Climb]  # each climb with its predicted time and power
+    descents: list[Descent]
+    checkpoints: list[Checkpoint]  # every 10 km, with elapsed moving time (regroupings excluded)
     trace: Trace
     course: Course
 
@@ -120,8 +127,12 @@ def estimate(
         regroup_s = rg.seconds_per_climb * course.climbs(rg.min_climb_gain_m, rg.tolerance_m)
 
     np_w = trace.normalized_power * vi_corr
+    moving = trace.time_s + regroup_s
+    climbs, descents, checkpoints = describe(course, trace.dt, trace.power)
+    e = node_elevation(course)
+    tss = moving / 3600 * (np_w / rider.ftp_w) ** 2 * 100 if rider.ftp_w else None
     return Estimate(
-        moving_time_s=trace.time_s + regroup_s,
+        moving_time_s=moving,
         distance_km=course.distance_m / 1000,
         elevation_gain_m=course.elevation_gain_m,
         avg_power_w=trace.avg_power,
@@ -129,6 +140,12 @@ def estimate(
         intensity_factor=np_w / rider.ftp_w if rider.ftp_w else None,
         splits=splits,
         regroup_s=regroup_s,
+        elevation_loss_m=float(np.clip(-np.diff(e), 0, None).sum()),
+        kilojoules=trace.avg_power * trace.time_s / 1000,
+        tss=tss,
+        climbs=climbs,
+        descents=descents,
+        checkpoints=checkpoints,
         trace=trace,
         course=course,
     )

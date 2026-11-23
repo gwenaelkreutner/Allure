@@ -37,8 +37,12 @@ def main(argv: list[str] | None = None) -> None:
         f"{res.distance_km:.1f} km, D+ {res.elevation_gain_m:.0f} m -> {_hms(res.moving_time_s)} "
         f"@ {res.avg_speed_kmh:.1f} km/h (avg {res.avg_power_w:.0f} W, NP {res.normalized_power_w:.0f} W)"
     )
-    for name, sp in res.splits.items():
-        print(f"  {name:8s} {sp.distance_km:6.1f} km  {_hms(sp.time_s)}  {sp.speed_kmh:5.1f} km/h")
+    if res.tss is not None:
+        print(f"  TSS {res.tss:.0f}, {res.kilojoules:.0f} kJ")
+    for c in res.climbs:
+        cat = f"cat {c.category}" if c.category else "bosse"
+        print(f"  km {c.start_km:5.1f}  {cat:6s} {c.length_km:4.1f} km {c.gain_m:4.0f} m  {c.avg_grade*100:4.1f} % "
+              f"(km le + dur {c.steepest_km_grade*100:4.1f} %)  {_hms(c.time_s)}  {c.speed_kmh:4.1f} km/h  {c.avg_power_w:3.0f} W")
 
 
 if __name__ == "__main__":

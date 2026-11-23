@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "allure-cycling"
-version = "0.2.0"
+version = "0.3.0"
 description = "Deterministic cycling moving-time estimation from a GPX route (physics-based, solo or group)"
 readme = "README.md"
 license = "MIT"
