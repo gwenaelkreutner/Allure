@@ -7,7 +7,7 @@ Deterministic estimation of cycling **moving time / average speed** from a GPX r
 - Terrain-aware pacing (more power on climbs, none on steep descents), cornering and
   braking limits on descents.
 - Solo or group riding with mixed relays (drafting lowers the effective CdA).
-- Intensity as a mode (`chill`, `tempo`, `race`, targeting NP/FTP) or an explicit power target
+- Intensity as a mode (`chill`, `steady`, `tempo`, `race`, targeting NP/FTP) or an explicit power target
   (normalized or average power).
 
 No history, no learning at run time: same inputs, same output.
@@ -20,7 +20,7 @@ print(res.moving_time_s, res.avg_speed_kmh)
 ```
 
 ```
-python -m allure route.gpx --mass 67 --ftp 288 --mode race --group 80
+python -m allure route.gpx --mass 67 --ftp 288 --mode race --race
 ```
 
 Status: v0, constants being calibrated against real rides.

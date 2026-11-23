@@ -86,3 +86,8 @@ def test_race_context_no_regroup_and_faster_than_solo():
     race = estimate(straight(), rider, power=p, context=Race())
     assert race.avg_speed_kmh > solo.avg_speed_kmh
     assert race.regroup_s == 0.0
+
+
+def test_mode_aliases():
+    from allure import Mode
+    assert Mode("soutenu") is Mode.STEADY and Mode("course") is Mode.RACE

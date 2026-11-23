@@ -87,15 +87,21 @@ Context = Solo | Group | Race
 
 
 class Mode(str, Enum):
-    CHILL = "chill"
-    TEMPO = "tempo"
-    RACE = "race"
+    CHILL = "chill"  # easy endurance (club "green" group)
+    STEADY = "steady"  # sustained endurance (club "blue"/"purple" groups)
+    TEMPO = "tempo"  # fast group ride ("red"/"black" groups)
+    RACE = "race"  # mass-start race, IF depends on duration
+
+    @classmethod
+    def _missing_(cls, value):
+        aliases = {"soutenu": cls.STEADY, "course": cls.RACE, "endurance": cls.CHILL}
+        return aliases.get(str(value).lower())
 
 
-# Intensity factor (NP / FTP) per mode. RACE depends on the expected duration
-# (hours -> IF, linearly interpolated). Starting values, to be calibrated against
-# real rides — see docs/validation.md.
-MODE_IF = {Mode.CHILL: 0.62, Mode.TEMPO: 0.76}
+# Intensity factor (NP / FTP) per mode, from real rides (2026): green group ~0.57,
+# blue ~0.69, purple ~0.74, black ~0.74-0.79, races 0.84-0.86 over 3-4 h.
+# RACE depends on the expected duration (hours -> IF, linearly interpolated).
+MODE_IF = {Mode.CHILL: 0.60, Mode.STEADY: 0.71, Mode.TEMPO: 0.77}
 RACE_IF_BY_HOURS = ((1.0, 0.95), (2.0, 0.90), (3.0, 0.86), (4.0, 0.83), (6.0, 0.78))
 
 
